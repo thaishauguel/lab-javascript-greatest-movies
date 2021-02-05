@@ -2970,91 +2970,72 @@ let array = [
 
 // Iteration 1: All directors? - Get the array of all directors.
 
-const getAllDirectors = (movies) => movies.map((movie) => movie.director)
+const getAllDirectors = movies => movies.map(movie => movie.director)
+
 
 // _Bonus_: It seems some of the directors had directed multiple movies so they will pop up multiple times in the array of directors. How could you "clean" a bit this array and make it unified (without duplicates)?
-//[... new Set()]
+const getUniqueAllDirectors = movies => [...new Set(getAllDirectors(movies))]
+
 
 // Iteration 2: Steven Spielberg. The best? - How many drama movies did STEVEN SPIELBERG direct?
-
-function howManyMovies(movies) {
-    const spielbergMovies = movies.filter( (drama) => {
-       return drama.director === "Steven Spielberg" && drama.genre.indexOf("Drama") !== -1 ;
-    } )
-
-    return spielbergMovies.length ;
-
-}
+const howManyMovies = movies => movies.filter( movie =>  movie.director === "Steven Spielberg" && movie.genre.indexOf("Drama") !== -1 ).length;
 
 
 // Iteration 3: All rates average - Get the average of all rates with 2 decimals
+const ratesAverage = movies => movies.length!==0 ? Number((1/ movies.length * movies.reduce( (acc, current) => current.rate ? acc += current.rate : acc, 0 )).toFixed(2)) : 0 ;
 
-// function ratesAverage(movies){ const result = movies.reduce((acc, current)=> { 
-//   acc+= current.rate; return acc},0) /movies.length
-//   if (movies.length!==0){ 
-//     return Number(result.toFixed(2))
-//   } else {return 0}
-// }
-// console.log (ratesAverage([]))
-
-// console.log(typeof ratesAverage(array)
-// )
-
-
-function ratesAverage(movies){ 
-  const result = movies.reduce( (acc, current) =>
-     { 
-      if (current.rate!==undefined) {
-        acc+= current.rate 
-      }
-      return acc
-     }
-     ,
-     0) /movies.length
-     if (movies.length!==0){ 
-      return Number(result.toFixed(2))
-     } else {return 0}
-}
 
 // Iteration 4: Drama movies - Get the average of Drama Movies
-
-function dramaMoviesRate (movies){
-  const dramaMovies= movies.filter((movie) => {
-    return movie.genre.indexOf("Drama") !== -1 
-  })
-  return ratesAverage (dramaMovies)
-}
-
+const dramaMoviesRate = movies => ratesAverage(movies.filter(movie => movie.genre.indexOf("Drama") !== -1 )) ;
 
 
 // Iteration 5: Ordering by year - Order by year, ascending (in growing order)
-
-function orderByYear (movies){
-  copyOfMovies=[...movies]
-  copyOfMovies.sort(function(a, b){
-    if (a.year!==b.year){return a.year-b.year}
-    else {return a.name > b.name ? 1 : -1}})
+const orderByYear = movies => {
+  let copyOfMovies=[...movies] ;
+  copyOfMovies.sort((a, b) => a.year!==b.year ? a.year-b.year : a.name > b.name ? 1 : -1)
   return copyOfMovies
-}
+}  
+
 
 
 // Iteration 6: Alphabetic Order - Order by title and print the first 20 titles
-
-function orderAlphabetically (movies){
-  copyOfMovies=[...movies]
-  copyOfMovies.sort(function(a, b){return a.title > b.title ? 1 : -1})
-  console.log (copyOfMovies)
-  const alphaMovies= copyOfMovies.filter((value, index) => {return index<20}).map((movie)=> movie.title)
-  
-return alphaMovies
+const orderAlphabetically = movies => {
+  let copyOfMovies=[...movies] ;
+  copyOfMovies.sort((a, b) => a.title > b.title ? 1 : -1)
+  return copyOfMovies.filter((value, index) =>  index < 20).map(movie => movie.title) ;
 }
-
-console.log(orderAlphabetically(array))
-
-
 
 
 // BONUS - Iteration 7: Time Format - Turn duration of the movies from hours to minutes
+const turnStringToMinuts = string => {
+  const timeSplit = string.indexOf("h") !== -1 ? string.replace('h', '').replace('min','').split(" ") : [0, string.replace('min','').split(" ")] ;
+  
+  if (timeSplit.length === 2) {
+    return Number(timeSplit[0]*60 + Number(timeSplit[1])) ;
+  } else {
+    return Number(timeSplit[0]*60) ;
+  }
+}
+
+const turnHoursToMinutes = movies => {
+  let moviesCopy = JSON.parse(JSON.stringify(movies)) ;
+  moviesCopy.forEach(movie => {movie.duration = turnStringToMinuts(movie.duration)})
+  return moviesCopy ;
+}
 
 
 // BONUS - Iteration 8: Best yearly rate average - Best yearly rate average
+const bestYearAvg = movies => {
+  const ratingPerYear = {} ;
+  movies.forEach(movie => ratingPerYear[movie.year] ? ratingPerYear[movie.year].push(movie.rate) : ratingPerYear[movie.year] = [movie.rate])
+  let bestYear, yearAverage,  bestYearAverage = -Infinity ;
+  for (let year in ratingPerYear) {
+    yearAverage = 1/ratingPerYear[year].length * ratingPerYear[year].reduce((acc, curr) => acc += curr)
+    if (bestYearAverage < yearAverage) {
+      bestYearAverage = yearAverage ; 
+      bestYear = year ;
+    }
+  }
+
+  return movies.length > 0 ? 'The best year was '+ bestYear +' with an average rate of '+bestYearAverage : null ;
+}
