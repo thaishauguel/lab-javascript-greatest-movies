@@ -3009,12 +3009,7 @@ const orderAlphabetically = movies => {
 // BONUS - Iteration 7: Time Format - Turn duration of the movies from hours to minutes
 const turnStringToMinuts = string => {
   const timeSplit = string.indexOf("h") !== -1 ? string.replace('h', '').replace('min','').split(" ") : [0, string.replace('min','').split(" ")] ;
-  
-  if (timeSplit.length === 2) {
-    return Number(timeSplit[0]*60 + Number(timeSplit[1])) ;
-  } else {
-    return Number(timeSplit[0]*60) ;
-  }
+  return timeSplit.length === 2 ? timeSplit[0]*60 + Number(timeSplit[1]) : timeSplit[0]*60
 }
 
 const turnHoursToMinutes = movies => {
@@ -3031,10 +3026,8 @@ const bestYearAvg = movies => {
   let bestYear, yearAverage,  bestYearAverage = -Infinity ;
   for (let year in ratingPerYear) {
     yearAverage = 1/ratingPerYear[year].length * ratingPerYear[year].reduce((acc, curr) => acc += curr)
-    if (bestYearAverage < yearAverage) {
-      bestYearAverage = yearAverage ; 
-      bestYear = year ;
-    }
+    bestYear = bestYearAverage < yearAverage ? year : bestYear ;
+    bestYearAverage = bestYearAverage < yearAverage ? yearAverage : bestYearAverage ;
   }
 
   return movies.length > 0 ? 'The best year was '+ bestYear +' with an average rate of '+bestYearAverage : null ;
