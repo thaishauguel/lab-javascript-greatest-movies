@@ -3022,13 +3022,27 @@ const turnHoursToMinutes = movies => {
 // BONUS - Iteration 8: Best yearly rate average - Best yearly rate average
 const bestYearAvg = movies => {
   const ratingPerYear = {} ;
-  movies.forEach(movie => ratingPerYear[movie.year] ? ratingPerYear[movie.year].push(movie.rate) : ratingPerYear[movie.year] = [movie.rate])
+  movies.forEach(movie => ratingPerYear[movie.year] ? (ratingPerYear[movie.year][0] += movie.rate, ratingPerYear[movie.year][1]++) : ratingPerYear[movie.year] = [movie.rate,1]) ;
   let bestYear, yearAverage,  bestYearAverage = -Infinity ;
   for (let year in ratingPerYear) {
-    yearAverage = 1/ratingPerYear[year].length * ratingPerYear[year].reduce((acc, curr) => acc += curr)
+    yearAverage = ratingPerYear[year][0]/ratingPerYear[year][1] ;
     bestYear = bestYearAverage < yearAverage ? year : bestYear ;
     bestYearAverage = bestYearAverage < yearAverage ? yearAverage : bestYearAverage ;
   }
 
   return movies.length > 0 ? 'The best year was '+ bestYear +' with an average rate of '+bestYearAverage : null ;
 }
+
+//  other solution, maybe easier to understand, but use more memory
+// const bestYearAvg = movies => {
+//   const ratingPerYear = {} ;
+//   movies.forEach(movie => ratingPerYear[movie.year] ? ratingPerYear[movie.year].push(movie.rate) : ratingPerYear[movie.year] = [movie.rate]) ;
+//   let bestYear, yearAverage,  bestYearAverage = -Infinity ;
+//   for (let year in ratingPerYear) {
+//     yearAverage = 1/ratingPerYear[year].length * ratingPerYear[year].reduce((acc, curr) => acc += curr)
+//     bestYear = bestYearAverage < yearAverage ? year : bestYear ;
+//     bestYearAverage = bestYearAverage < yearAverage ? yearAverage : bestYearAverage ;
+//   }
+
+//   return movies.length > 0 ? 'The best year was '+ bestYear +' with an average rate of '+bestYearAverage : null ;
+// }
